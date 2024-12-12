@@ -29,6 +29,7 @@ class NSFWClassifierNode:
       }
     }
 
+  OUTPUT_NODE = True
   RETURN_TYPES = ("STRING",)
   RETURN_NAMES = ("nsfw_predictions",)
   FUNCTION = "process_nsfw"
