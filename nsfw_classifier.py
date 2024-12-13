@@ -7,6 +7,7 @@ import folder_paths
 import os
 from .utils import get_txt_file_counter
 import re
+import json
 
 class NSFWClassifierNode:
   def __init__(self):
@@ -58,7 +59,7 @@ class NSFWClassifierNode:
       if self.pipe:
         response = self.pipe(image)
         scores = {item['label']: round(item['score'] * 100, 2) for item in response}
-        return (scores,)
+        return (json.dumps(scores),)
       else:
         print("Pipeline is not initialized.")
         return ("",)
@@ -139,7 +140,7 @@ class NSFWClassifierSaveNode(NSFWClassifierNode):
 
     try:
       with open(os.path.join(self.output_dir, output_file), "w") as file:
-        file.write(f"{predictions}")
+        file.write(predictions)
 
       print(f"Predictions stored in {output_file}")
       return (predictions,)
