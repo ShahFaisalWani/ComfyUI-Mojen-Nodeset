@@ -36,3 +36,25 @@ class LogPercentNode:
 
     logging.info(f"PROGRESS: {percent}%")
     return (anything,)
+
+class StringLengthNode:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "input_string": ("STRING", {}),
+            },
+            "hidden": {
+                "unique_id": "UNIQUE_ID",
+                "extra_pnginfo": "EXTRA_PNGINFO",
+            }
+        }
+
+    RETURN_TYPES = ("INT",)
+    RETURN_NAMES = ("string_length",)
+    FUNCTION = "compute_length"
+    CATEGORY = "Mojen/Custom"
+
+    def compute_length(self, input_string, unique_id=None, extra_pnginfo=None):
+        string_length = len(input_string)
+        return (string_length,)

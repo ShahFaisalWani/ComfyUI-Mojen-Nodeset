@@ -1,4 +1,4 @@
-from .log_percent import LogPercentNode
+from .log_percent import LogPercentNode, StringLengthNode
 from .tag_processor import TagProcessorNode
 from .extract_style import StyleExtractorNode
 from .analyze_processor import AnalyzeProcessorNode
@@ -7,6 +7,7 @@ from .image_loader import ImageLoader
 
 NODE_CLASS_MAPPINGS = {
   "MojenLogPercent": LogPercentNode,
+  "MojenStringLength": StringLengthNode,
   "MojenTagProcessor": TagProcessorNode,
   "MojenStyleExtractor": StyleExtractorNode,
   "MojenAnalyzeProcessor": AnalyzeProcessorNode,
