@@ -1,4 +1,4 @@
-from transformers import pipeline
+from transformers import pipeline, ViTImageProcessor
 from PIL import Image, UnidentifiedImageError
 from pathlib import Path
 import torch
@@ -10,17 +10,35 @@ import re
 import json
 
 class NSFWClassifierNode:
+  MODEL_ID = "giacomoarienti/nsfw-classifier"
+
   def __init__(self):
     self.script_dir = Path(__file__).parent
+    device = 0 if torch.cuda.is_available() else -1
     try:
-      self.pipe = pipeline(
-        "image-classification",
-        model="giacomoarienti/nsfw-classifier",
-        device=0 if torch.cuda.is_available() else -1
-      )
+      self.pipe = self._load_pipeline(device)
     except Exception as e:
       print(f"Failed to initialize the NSFW classification pipeline: {e}")
       self.pipe = None
+
+  def _load_pipeline(self, device):
+    model_id = self.MODEL_ID
+    try:
+      # Fast path: works on transformers < 5 and on well-formed repos.
+      return pipeline("image-classification", model=model_id, device=device)
+    except (ValueError, KeyError, OSError) as e:
+      # transformers >= 5 rewrote AutoImageProcessor's class resolution and
+      # can't infer the processor for this older ViT repo. Naming the concrete
+      # class skips auto-resolution entirely.
+      print(f"AutoImageProcessor could not resolve a processor ({e}); "
+            f"falling back to an explicit ViTImageProcessor.")
+      image_processor = ViTImageProcessor.from_pretrained(model_id)
+      return pipeline(
+        "image-classification",
+        model=model_id,
+        image_processor=image_processor,
+        device=device,
+      )
 
   @classmethod
   def INPUT_TYPES(cls):
